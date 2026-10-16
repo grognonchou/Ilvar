@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ilvar, le dialecte secret</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #eceffa;
+    --panel: #ffffff;
+    --panel-edge: #cfd5ee;
+    --text: #1a1e3d;
+    --muted: #5b6188;
+    --glyph: #4b32c8;
+    --accent: #4b32c8;
+    --accent-text: #ffffff;
+    --warn: #a8321f;
+    color-scheme: light;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12152b;
+      --panel: #1c2040;
+      --panel-edge: #333a6b;
+      --text: #e7e5f6;
+      --muted: #9aa0cc;
+      --glyph: #8ee6cb;
+      --accent: #8ee6cb;
+      --accent-text: #0f1a17;
+      --warn: #ff9a85;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #12152b;
+    --panel: #1c2040;
+    --panel-edge: #333a6b;
+    --text: #e7e5f6;
+    --muted: #9aa0cc;
+    --glyph: #8ee6cb;
+    --accent: #8ee6cb;
+    --accent-text: #0f1a17;
+    --warn: #ff9a85;
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Bricolage Grotesque", "Segoe UI", system-ui, -apple-system, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 36px 20px 64px; }
+
+  header { margin-bottom: 28px; }
+  h1 {
+    margin: 0;
+    font-size: clamp(3.4rem, 15vw, 6.5rem);
+    line-height: 0.95;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+  }
+  .title-glyphs {
+    margin: 10px 0 0;
+    font-size: clamp(1.3rem, 5.5vw, 2rem);
+    color: var(--glyph);
+    letter-spacing: 0.18em;
+    word-break: break-all;
+    min-height: 1.6em;
+  }
+  .lede { margin: 14px 0 0; color: var(--muted); max-width: 52ch; }
+
+  .pane {
+    background: var(--panel);
+    border: 1.5px solid var(--panel-edge);
+    border-radius: 14px;
+    padding: 14px 16px 12px;
+    margin-bottom: 14px;
+  }
+  .pane:focus-within { border-color: var(--accent); }
+  .pane-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .pane-head h2 { margin: 0; font-size: 1.05rem; font-weight: 600; }
+  .actions { display: flex; gap: 8px; }
+  button {
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    background: transparent;
+    border: 1.5px solid var(--panel-edge);
+    border-radius: 999px;
+    padding: 5px 14px;
+    cursor: pointer;
+  }
+  button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+  button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  textarea, input[type="text"] {
+    width: 100%;
+    font: inherit;
+    color: var(--text);
+    background: transparent;
+    border: 0;
+    resize: vertical;
+    padding: 4px 0;
+  }
+  textarea { min-height: 130px; font-size: 1.15rem; }
+  textarea:focus-visible { outline: none; }
+  #alien {
+    font-family: "Segoe UI Symbol", "Noto Sans Symbols 2", "Apple Symbols", "DejaVu Sans", sans-serif;
+    color: var(--glyph);
+    font-size: 1.35rem;
+    line-height: 1.9;
+    letter-spacing: 0.12em;
+  }
+  .status { min-height: 1.4em; margin: 4px 0 0; font-size: 0.88rem; color: var(--muted); }
+  .status.warn { color: var(--warn); }
+
+  .key {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+    margin: 22px 0 10px;
+  }
+  .key label { font-weight: 600; }
+  .key input {
+    flex: 1 1 180px;
+    border: 1.5px solid var(--panel-edge);
+    border-radius: 10px;
+    background: var(--panel);
+    padding: 8px 12px;
+  }
+  .key-note { margin: 0 0 22px; color: var(--muted); font-size: 0.92rem; max-width: 60ch; }
+
+  details { background: var(--panel); border: 1.5px solid var(--panel-edge); border-radius: 14px; padding: 12px 16px; }
+  summary { cursor: pointer; font-weight: 600; }
+  .legend { color: var(--muted); font-size: 0.92rem; margin: 10px 0 12px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 6px; }
+  .cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px 4px;
+    border: 1px solid var(--panel-edge);
+    border-radius: 8px;
+  }
+  .cell b { font-size: 1rem; }
+  .cell span {
+    color: var(--glyph);
+    font-family: "Segoe UI Symbol", "Noto Sans Symbols 2", "Apple Symbols", "DejaVu Sans", sans-serif;
+    letter-spacing: 0.1em;
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Ilvar</h1>
+    <p class="title-glyphs" id="titleGlyphs" aria-hidden="true"></p>
+    <p class="lede">Écrivez en français, le dialecte s'écrit tout seul. Collez du dialecte à droite et le français revient. Seuls ceux qui ont ce site (et la même clé) peuvent le lire.</p>
+  </header>
+
+  <section class="pane">
+    <div class="pane-head">
+      <h2>Français</h2>
+      <div class="actions">
+        <button type="button" id="copyFr">Copier</button>
+        <button type="button" id="clear">Effacer</button>
+      </div>
+    </div>
+    <textarea id="fr" placeholder="Écrivez votre message ici…" spellcheck="true"></textarea>
+  </section>
+
+  <section class="pane">
+    <div class="pane-head">
+      <h2>Dialecte ilvar</h2>
+      <div class="actions">
+        <button type="button" class="primary" id="copyAlien">Copier</button>
+      </div>
+    </div>
+    <textarea id="alien" placeholder="Le dialecte apparaît ici…" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"></textarea>
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+  </section>
+
+  <div class="key">
+    <label for="keyInput">Clé du dialecte</label>
+    <input type="text" id="keyInput" value="ilvar" spellcheck="false" autocomplete="off" autocapitalize="off">
+  </div>
+  <p class="key-note">Deux personnes qui ont la même clé se comprennent. Avec une autre clé, tous les signes changent de sens, et le message ne se lit plus.</p>
+
+  <details>
+    <summary>Voir l'alphabet de cette clé</summary>
+    <p class="legend">Chaque caractère devient un groupe de trois signes. Un espace s'écrit ⋮ et un retour à la ligne ↵. Un caractère absent de la liste (emoji, autre alphabet) s'écrit ✧ suivi de signes : il se lit aussi.</p>
+    <div class="grid" id="grid"></div>
+  </details>
+</main>
+
+<script>
+/*CORE*/
+const GLYPHS = ['◦', '▪', '△', '▽', '✕', '◇'];
+const SPACE_TOKEN = '⋮';
+const NEWLINE_TOKEN = '↵';
+const ESCAPE_MARK = '✧';
+const DEFAULT_KEY = 'ilvar';
+const CHARSET = Array.from(
+  'abcdefghijklmnopqrstuvwxyz' +
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
+  '0123456789' +
+  'àâäçéèêëîïôöùûüÿœæ' +
+  'ÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŸŒÆ' +
+  '.,;:!?\'’"-–—()[]«»…@&+=/%€*_#$<>\\|~^`{}°'
+);
+
+function seedFromKey(key) {
+  let h = 1779033703;
+  for (const ch of key) {
+    h = Math.imul(h ^ ch.codePointAt(0), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  return h >>> 0;
+}
+
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function buildTables(rawKey) {
+  const key = (rawKey || '').trim() || DEFAULT_KEY;
+  const codes = [];
+  for (let i = 0; i < 216; i++) {
+    codes.push(GLYPHS[Math.floor(i / 36)] + GLYPHS[Math.floor(i / 6) % 6] + GLYPHS[i % 6]);
+  }
+  const rand = mulberry32(seedFromKey(key));
+  for (let i = codes.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [codes[i], codes[j]] = [codes[j], codes[i]];
+  }
+  const enc = new Map();
+  const dec = new Map();
+  CHARSET.forEach((ch, i) => { enc.set(ch, codes[i]); dec.set(codes[i], ch); });
+  return { enc, dec };
+}
+
+function encode(text, tables) {
+  const clean = text.replace(/\r/g, '');
+  let out = '';
+  for (const ch of clean) {
+    if (ch === ' ') out += SPACE_TOKEN + ' ';
+    else if (ch === '\n') out += NEWLINE_TOKEN + '\n';
+    else if (tables.enc.has(ch)) out += tables.enc.get(ch) + ' ';
+    else {
+      let n = ch.codePointAt(0);
+      let digits = '';
+      do { digits = GLYPHS[n % 6] + digits; n = Math.floor(n / 6); } while (n > 0);
+      out += ESCAPE_MARK + digits + ' ';
+    }
+  }
+  return out.replace(/ +\n/g, '\n').trimEnd();
+}
+
+function decode(text, tables) {
+  const tokens = text.split(/\s+/).filter(Boolean);
+  let out = '';
+  let errors = 0;
+  for (const tok of tokens) {
+    if (tok === SPACE_TOKEN) { out += ' '; continue; }
+    if (tok === NEWLINE_TOKEN) { out += '\n'; continue; }
+    const chars = Array.from(tok);
+    if (chars[0] === ESCAPE_MARK) {
+      const digits = chars.slice(1).map(c => GLYPHS.indexOf(c));
+      if (digits.length === 0 || digits.some(d => d < 0)) { out += '?'; errors++; continue; }
+      const cp = digits.reduce((acc, d) => acc * 6 + d, 0);
+      try { out += String.fromCodePoint(cp); } catch (e) { out += '?'; errors++; }
+      continue;
+    }
+    if (chars.length % 3 !== 0 || chars.some(c => !GLYPHS.includes(c))) { out += '?'; errors++; continue; }
+    for (let i = 0; i < chars.length; i += 3) {
+      const code = chars[i] + chars[i + 1] + chars[i + 2];
+      if (tables.dec.has(code)) out += tables.dec.get(code);
+      else { out += '?'; errors++; }
+    }
+  }
+  return { text: out, errors };
+}
+/*END*/
+
+const $ = (id) => document.getElementById(id);
+const fr = $('fr'), alien = $('alien'), keyInput = $('keyInput'), status = $('status');
+let tables = buildTables(keyInput.value);
+let lastEdited = 'fr';
+
+function setStatus(msg, warn) {
+  status.textContent = msg || '';
+  status.className = 'status' + (warn ? ' warn' : '');
+}
+
+function fromFrench() {
+  alien.value = encode(fr.value, tables);
+  setStatus('');
+}
+
+function fromAlien() {
+  const res = decode(alien.value, tables);
+  fr.value = res.text;
+  setStatus(res.errors ? 'Certains signes ne se lisent pas avec cette clé. Ils apparaissent comme « ? ».' : '', res.errors > 0);
+}
+
+function renderTitle() {
+  $('titleGlyphs').textContent = encode('Ilvar', tables);
+}
+
+function renderGrid() {
+  const grid = $('grid');
+  grid.textContent = '';
+  const shown = Array.from('abcdefghijklmnopqrstuvwxyz0123456789éèêàçù.,!?\'-:;()');
+  for (const ch of shown) {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    const b = document.createElement('b');
+    b.textContent = ch;
+    const s = document.createElement('span');
+    s.textContent = tables.enc.get(ch);
+    cell.append(b, s);
+    grid.append(cell);
+  }
+}
+
+function applyKey() {
+  tables = buildTables(keyInput.value);
+  try { localStorage.setItem('ilvar-key', keyInput.value); } catch (e) {}
+  renderTitle();
+  renderGrid();
+  if (lastEdited === 'fr') fromFrench(); else fromAlien();
+}
+
+fr.addEventListener('input', () => { lastEdited = 'fr'; fromFrench(); });
+alien.addEventListener('input', () => { lastEdited = 'alien'; fromAlien(); });
+keyInput.addEventListener('input', applyKey);
+
+$('clear').addEventListener('click', () => {
+  fr.value = ''; alien.value = ''; setStatus(''); lastEdited = 'fr'; fr.focus();
+});
+
+async function copyFrom(el, btn) {
+  const label = btn.textContent;
+  try {
+    await navigator.clipboard.writeText(el.value);
+  } catch (e) {
+    el.select();
+    try { document.execCommand('copy'); } catch (e2) {}
+  }
+  btn.textContent = 'Copié';
+  setTimeout(() => { btn.textContent = label; }, 1400);
+}
+$('copyAlien').addEventListener('click', (e) => copyFrom(alien, e.currentTarget));
+$('copyFr').addEventListener('click', (e) => copyFrom(fr, e.currentTarget));
+
+try {
+  const saved = localStorage.getItem('ilvar-key');
+  if (saved) { keyInput.value = saved; tables = buildTables(saved); }
+} catch (e) {}
+renderTitle();
+renderGrid();
+</script>
+</body>
+</html>
